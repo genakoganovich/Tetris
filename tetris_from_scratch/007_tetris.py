@@ -11,10 +11,10 @@ Website: zetcode.com
 """
 
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 
 
-class Tetris(QWidget):
+class Tetris(QMainWindow):
 
     def __init__(self):
         super().__init__()
@@ -22,11 +22,17 @@ class Tetris(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.resize(250, 150)
-        self.move(300, 300)
+        self.statusBar().showMessage('Ready')
+        self.resize(180, 380)
+        self.center()
         self.setWindowTitle('Tetris')
         self.show()
 
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
 def main():
     app = QApplication(sys.argv)

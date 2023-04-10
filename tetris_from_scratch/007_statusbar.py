@@ -3,18 +3,17 @@
 """
 ZetCode PyQt5 tutorial
 
-This example shows an icon
-in the titlebar of the window.
+This program creates a statusbar.
 
 Author: Jan Bodnar
 Website: zetcode.com
 """
 
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication
 
 
-class Tetris(QWidget):
+class Example(QMainWindow):
 
     def __init__(self):
         super().__init__()
@@ -22,15 +21,16 @@ class Tetris(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.resize(250, 150)
-        self.move(300, 300)
-        self.setWindowTitle('Tetris')
+        self.statusBar().showMessage('Ready')
+
+        self.setGeometry(300, 300, 250, 150)
+        self.setWindowTitle('Statusbar')
         self.show()
 
 
 def main():
     app = QApplication(sys.argv)
-    ex = Tetris()
+    ex = Example()
     sys.exit(app.exec_())
 
 
