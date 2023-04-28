@@ -65,12 +65,7 @@ class Board(QFrame):
         qp.end()
 
     def drawRectangles(self, qp):
-        col = QColor(0, 0, 0)
-        col.setNamedColor('#d4d4d4')
-        qp.setPen(col)
-
-        qp.setBrush(QColor(200, 0, 0))
-        qp.drawRect(10, 15, 90, 60)
+        qp.fillRect(10, 15, 90, 60, QColor(200, 0, 0))
 
 
 def main():
