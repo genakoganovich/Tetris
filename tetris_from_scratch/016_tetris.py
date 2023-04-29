@@ -13,7 +13,7 @@ Website: zetcode.com
 import sys
 from PyQt5.QtCore import Qt, QBasicTimer, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QFrame
-from PyQt5.QtGui import QPainter, QColor, QBrush
+from PyQt5.QtGui import QPainter, QColor, QPen
 
 
 class Tetris(QMainWindow):
@@ -49,8 +49,9 @@ class Board(QFrame):
 
     BoardWidth = 10
     BoardHeight = 22
-    Speed = 3000
-    Counter = 0
+    Speed = 300
+    Column_Count = 0
+    Line_Count = 0
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -78,13 +79,15 @@ class Board(QFrame):
     def paintEvent(self, e):
         painter = QPainter()
         painter.begin(self)
+        self.drawGrid(painter)
         self.drawBoard(painter)
+        self.drawMove(painter)
         painter.end()
 
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
-            self.Counter = self.Counter + 1
-            self.msg2Statusbar.emit(str(self.Counter))
+            self.msg2Statusbar.emit(str(Board.Line_Count))
+            self.update()
         else:
             super(Board, self).timerEvent(event)
 
@@ -96,13 +99,40 @@ class Board(QFrame):
             for j in range(Board.BoardWidth):
                 self.drawSquare(painter,
                                 rect.left() + j * self.squareWidth(),
-                                boardTop + i * self.squareHeight(), QColor(200, 0, 0))
+                                boardTop + i * self.squareHeight(),
+                                QColor(255, 255, 0))
 
     def drawSquare(self, painter, x, y, color):
         painter.fillRect(x + 1, y + 1, self.squareWidth() - 2,
                          self.squareHeight() - 2, color)
 
+    def drawMove(self, painter):
+        rect = self.contentsRect()
+        boardTop = rect.bottom() - Board.BoardHeight * self.squareHeight()
+        self.drawSquare(painter,
+                        rect.left() + (Board.Column_Count % Board.BoardWidth) * self.squareWidth(),
+                        boardTop + (Board.Line_Count % Board.BoardHeight) * self.squareHeight(),
+                        QColor(200, 0, 0))
+        Board.Line_Count = Board.Line_Count + 1
+        Board.Column_Count = Board.Line_Count // Board.BoardHeight
 
+    def drawGrid(self, painter):
+        pen = QPen(Qt.black, 1, Qt.SolidLine)
+        rect = self.contentsRect()
+        boardTop = rect.bottom() - Board.BoardHeight * self.squareHeight()
+
+        painter.setPen(pen)
+        for i in range(Board.BoardHeight):
+            painter.drawLine(rect.left(),
+                             boardTop + i * self.squareHeight(),
+                             rect.left() + rect.width(),
+                             boardTop + i * self.squareHeight())
+
+        for j in range(Board.BoardWidth):
+            painter.drawLine(rect.left() + j * self.squareWidth(),
+                             boardTop,
+                             rect.left() + j * self.squareWidth(),
+                             rect.bottom())
 def main():
     app = QApplication(sys.argv)
     ex = Tetris()
